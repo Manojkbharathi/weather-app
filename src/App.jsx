@@ -1,35 +1,63 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { useState } from 'react';
 
-function App() {
-  const [count, setCount] = useState(0)
+const api = {
+  key: '251619f52a4a4969c146bdbcc82276ae',
+  base: 'https://api.openweathermap.org/data/2.5/',
+};
 
+const App = () => {
+  const [search, setSearch] = useState('');
+  const [weather, setWeather] = useState({});
+  const clickHandler = () => {
+    fetch(`${api.base}weather?q=${search}&units=metric&APPID=${api.key}`)
+      .then((res) => res.json())
+      .then((result) => {
+        setWeather(result);
+        console.log(result);
+      });
+  };
   return (
-    <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
-}
+    <div className='app'>
+      <h1> Weather App</h1>
+      <h2>Enter you country/ city name to get weather</h2>
+      <input
+        type='text'
+        placeholder='search...'
+        onChange={(e) => setSearch(e.target.value)}
+      />
+      <button className='btn' onClick={clickHandler}>
+        Search
+      </button>
 
-export default App
+      {typeof weather.main != 'undefined' ? (
+        <div className='details'>
+          <h2>
+            <span>City</span> :{weather.name}
+          </h2>
+          <h2>
+            <span>Country</span> : {weather.sys.country}
+          </h2>
+          <h2>
+            <span>Temprature</span> : {weather.main.temp}
+          </h2>
+          <h2>
+            <span> Latitude</span> : {weather.coord.lat}
+          </h2>
+          <h2>
+            <span> Longitude</span> : {weather.coord.lon}
+          </h2>
+          <h2>
+            <span> Wind</span> : {weather.wind.speed}mph
+          </h2>
+          <h2>
+            <span> Sky</span> : {weather.weather[0].main}
+          </h2>
+        </div>
+      ) : (
+        ''
+      )}
+    </div>
+  );
+};
+
+export default App;
